@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - MovieMatch</title>
+    <style>
+        body {
+            font-family: Italic, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('netflix.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(0px);
+            z-index: 1;
+        }
+
+        .login-container {
+            position: relative;
+            z-index: 2;
+            background-color: rgba(20, 20, 20, 0.81);
+            padding: 40px 30px;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.8);
+            text-align: center;
+            width: 350px;
+        }
+
+        .login-container h1 {
+            margin-bottom: 20px;
+            color: #fff;
+            font-size: 2em;
+            font-weight: 700;
+        }
+
+        .login-container input[type="email"],
+        .login-container input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            background: #333;
+            color: #fff;
+            font-size: 1em;
+        }
+
+        .login-container button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            background: #e50914;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .login-container button:hover {
+            background: #f40612;
+        }
+
+        .login-container a {
+            display: block;
+            margin-top: 15px;
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.9em;
+        }
+
+        .login-container a:hover {
+            text-decoration: underline;
+        }
+
+        .login-container small {
+            display: block;
+            margin-top: 15px;
+            font-size: 0.8em;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>Sign In</h1>
+        {% if error %}
+        <p style="color: red;">{{ error }}</p>
+        {% endif %}
+        <form action="/index.html" method="POST">
+            <input type="email" name="email" placeholder="Email or mobile number" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Sign In</button>
+        </form>
+        <a href="#">Forgot password?</a>
+        <a href="register.html">New to MovieMatch? Sign up now</a>
+        <small>This page is protected by reCAPTCHA to ensure security.</small>
+    </div>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Register - MovieMatch</title>
+  <style>
+    body {
+      font-family: Italic, sans-serif;
+      background: url('netflix.jpg') no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .register-container {
+      background-color: rgba(20,20,20,0.85);
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.8);
+      text-align: center;
+      width: 350px;
+    }
+    .register-container h1 {
+      margin-bottom: 20px;
+      color: #fff;
+      font-size: 2em;
+      font-weight: 700;
+    }
+    .register-container input[type="text"],
+    .register-container input[type="email"],
+    .register-container input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 5px;
+      background: #333;
+      color: #fff;
+      font-size: 1em;
+    }
+    .register-container button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 20px;
+      background: #e50914;
+      border: none;
+      border-radius: 5px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .register-container button:hover {
+      background: #f40612;
+    }
+    .register-container a {
+      display: block;
+      margin-top: 15px;
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.9em;
+    }
+    .register-container a:hover {
+      text-decoration: underline;
+    }
+    .register-container p.error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <div class="register-container">
+    <h1>Sign Up</h1>
+    {% if error %}
+    <p class="error">{{ error }}</p>
+    {% endif %}
+    <form action="/register.html" method="POST">
+      <input type="text" name="username" placeholder="Username" required>
+      <input type="email" name="email" placeholder="Email" required>
+      <input type="password" name="password" placeholder="Password" required>
+      <input type="password" name="confirm_password" placeholder="Confirm Password" required>
+      <button type="submit">Register</button>
+    </form>
+    <a href="login.html">Already have an account? Sign in</a>
+  </div>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Personalized Recommendations - MovieMatch</title>
+  <link rel="stylesheet" href="static/css/style.css">
+  <style>
+    /* Improved dropdown styling */
+    .mood-container {
+      text-align: center;
+      margin: 20px auto;
+    }
+    select {
+      width: 60%;
+      padding: 10px;
+      font-size: 1em;
+      border: 2px solid #e50914;
+      border-radius: 5px;
+      outline: none;
+      background: black;
+      color: white;
+      text-align: center;
+      cursor: pointer;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 1em;
+      border: none;
+      background-color: #e50914;
+      color: #fff;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: #bf0810;
+    }
+    /* Improved Results Layout */
+    #resultsContainer {
+      display: flex;
+      overflow-x: auto;
+      white-space: nowrap;
+      margin-top: 20px;
+      gap: 10px;
+      padding: 10px;
+    }
+    .carousel-item {
+      flex: 0 0 auto;
+      width: 150px;
+      cursor: pointer;
+    }
+    .carousel-item img {
+      width: 100%;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Personalized Recommendations</h1>
+  </header>
+
+  <section class="hero">
+    <h1>Get Movies Based on Your Mood</h1>
+    <p>Select your current mood and let us recommend movies that match it!</p>
+  </section>
+
+  <div class="mood-container">
+    <form id="moodForm">
+      <select id="moodInput" required>
+        <option value="">Select Mood</option>
+        <option value="happy">Happy</option>
+        <option value="sad">Sad</option>
+        <option value="excited">Excited</option>
+        <option value="romantic">Romantic</option>
+        <option value="scary">Scary</option>
+        <option value="adventurous">Adventurous</option>
+      </select>
+      <br>
+      <button type="submit">Get Recommendations</button>
+    </form>
+  </div>
+
+  <div id="resultsContainer"></div>
+
+  <!-- Movie Overview Modal -->
+  <div id="overviewModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); justify-content:center; align-items:center; z-index:1000;">
+    <div class="modal-content" style="background:#141414; padding:20px; border-radius:10px; position:relative; width:80%; max-width:600px; text-align:center;">
+      <span class="close" onclick="closeModal()" style="position:absolute; top:10px; right:20px; font-size:30px; cursor:pointer; color:#fff;">&times;</span>
+      <h2 id="modalTitle" style="color:#e50914;"></h2>
+      <img id="modalImage" src="" alt="Movie Poster" style="width:100%; max-height:300px; border-radius:8px; margin:10px 0;">
+      <p id="modalContent" style="color:#fff;"></p>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2024 MovieMatch. All rights reserved.</p>
+  </footer>
+
+  <script>
+    document.getElementById("moodForm").addEventListener("submit", async function(event) {
+      event.preventDefault();
+      const mood = document.getElementById("moodInput").value;
+      const resultsContainer = document.getElementById("resultsContainer");
+      resultsContainer.innerHTML = "";
+      if (!mood) {
+        alert("Please select a mood.");
+        return;
+      }
+      try {
+        const response = await fetch("/api/personalized", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ mood: mood })
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch recommendations.");
+        }
+        const data = await response.json();
+        if (data.recommendations && data.recommendations.length > 0) {
+          data.recommendations.forEach((movie) => {
+            const movieCard = document.createElement("div");
+            movieCard.className = "carousel-item";
+            movieCard.onclick = function() {
+              showOverview(movie.title, movie.overview, movie.image_url);
+            };
+            const img = document.createElement("img");
+            img.src = movie.image_url;
+            img.alt = movie.title;
+            const title = document.createElement("h3");
+            title.textContent = movie.title;
+            movieCard.appendChild(img);
+            movieCard.appendChild(title);
+            resultsContainer.appendChild(movieCard);
+          });
+        } else {
+          resultsContainer.innerHTML = "<p>No recommendations found for this mood.</p>";
+        }
+      } catch (error) {
+        console.error(error);
+        resultsContainer.innerHTML = "<p>Error fetching recommendations. Please try again.</p>";
+      }
+    });
+
+    function showOverview(title, content, imageUrl) {
+      document.getElementById("modalTitle").textContent = title;
+      document.getElementById("modalContent").textContent = content;
+      document.getElementById("modalImage").src = imageUrl;
+      document.getElementById("overviewModal").style.display = "flex";
+    }
+    function closeModal() {
+      document.getElementById("overviewModal").style.display = "none";
+    }
+  </script>
+</body>
+</html>

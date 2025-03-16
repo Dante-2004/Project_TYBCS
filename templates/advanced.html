@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Advanced Search - MovieMatch</title>
+  <link rel="stylesheet" href="static/css/style.css">
+  <style>
+    /* Optional inline styles for advanced.html */
+    .carousel-item img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+    .advanced-form {
+      text-align: center;
+      margin: 20px;
+    }
+    .advanced-form input {
+      margin: 5px;
+      padding: 8px;
+      border-radius: 5px;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Advanced Search</h1>
+  </header>
+
+  <section class="hero">
+    <h1>Find Your Next Movie</h1>
+    <p>Search by genre, year, or your favorite actor.</p>
+  </section>
+
+  <div class="advanced-form">
+    <input type="text" id="genreInput" placeholder="Genre (ID or name)">
+    <input type="text" id="yearInput" placeholder="Year">
+    <input type="text" id="actorInput" placeholder="Actor Name">
+    <button id="advancedSearchButton">Search</button>
+  </div>
+
+  <div id="resultsContainer"></div>
+
+  <!-- Movie Overview Modal (reuse same modal structure) -->
+  <div id="overviewModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); justify-content:center; align-items:center; z-index:1000;">
+    <div class="modal-content" style="background:#141414; padding:20px; border-radius:10px; position:relative; width:80%; max-width:600px; text-align:center;">
+      <span class="close" onclick="closeModal()" style="position:absolute; top:10px; right:20px; font-size:30px; cursor:pointer; color:#fff;">&times;</span>
+      <h2 id="modalTitle" style="color:#e50914;"></h2>
+      <img id="modalImage" src="" alt="Movie Poster" style="width:100%; max-height:300px; border-radius:8px; margin:10px 0;">
+      <p id="modalContent" style="color:#fff;"></p>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2024 MovieMatch. All rights reserved.</p>
+  </footer>
+
+  <script>
+    document.getElementById("advancedSearchButton").addEventListener("click", async function() {
+      const genre = document.getElementById("genreInput").value.trim();
+      const year = document.getElementById("yearInput").value.trim();
+      const actor = document.getElementById("actorInput").value.trim();
+      const resultsContainer = document.getElementById("resultsContainer");
+      resultsContainer.innerHTML = "";
+      const queryParams = new URLSearchParams();
+      if (genre) queryParams.append("genre", genre);
+      if (year) queryParams.append("year", year);
+      if (actor) queryParams.append("actor", actor);
+      try {
+        const response = await fetch("/advanced?" + queryParams.toString());
+        if (!response.ok) {
+          throw new Error("Failed to fetch movies.");
+        }
+        const data = await response.json();
+        if (data.recommendations && data.recommendations.length > 0) {
+          data.recommendations.forEach((movie) => {
+            const movieCard = document.createElement("div");
+            movieCard.className = "carousel-item";
+            movieCard.onclick = function() {
+              showOverview(movie.title, movie.overview, movie.image_url);
+            };
+            const img = document.createElement("img");
+            img.src = movie.image_url;
+            img.alt = movie.title;
+            const title = document.createElement("h3");
+            title.textContent = movie.title;
+            movieCard.appendChild(img);
+            movieCard.appendChild(title);
+            resultsContainer.appendChild(movieCard);
+          });
+        } else {
+          resultsContainer.innerHTML = "<p>No movies found for your criteria.</p>";
+        }
+      } catch (error) {
+        console.error(error);
+        resultsContainer.innerHTML = "<p>Error fetching movies. Please try again.</p>";
+      }
+    });
+
+    function showOverview(title, content, imageUrl) {
+      document.getElementById("modalTitle").textContent = title;
+      document.getElementById("modalContent").textContent = content;
+      document.getElementById("modalImage").src = imageUrl;
+      document.getElementById("overviewModal").style.display = "flex";
+    }
+    function closeModal() {
+      document.getElementById("overviewModal").style.display = "none";
+    }
+  </script>
+</body>
+</html>
